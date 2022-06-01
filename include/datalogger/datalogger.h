@@ -43,6 +43,8 @@ class SimpleDataLogger:public DataLogger
     private:
         std::ofstream loggerfile;
         uint16_t chunksize=1024;
+        long long seek_position;
+        void increment_position(long long position);
     public:
         SimpleDataLogger(){}
         bool init(char *name,long long max_size);

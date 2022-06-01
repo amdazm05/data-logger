@@ -19,13 +19,26 @@ int main(int argc, char * argv[])
 
     char * buffer =NULL;
     buffer=new char[9];
-    loggers[2]->init("b.dat",9);
+    loggers[2]->init("b.dat",1024);
     loggers[1]->init("c.dat",2048);
 
 
     while(true)
     {
         if(loggers[1]->write_data("TrojanHorse",11))
+        {
+            continue;
+        }
+        else 
+        {
+            break;
+        }
+    }
+
+
+    while(true)
+    {
+        if(loggers[2]->write_data("TrojanHorse",11))
         {
             continue;
         }
