@@ -28,6 +28,8 @@ bool ComplexDataLogger::init(char *name,long long max_size)
 bool SimpleDataLogger::init(char *name,long long max_size)
 {
     bool status=false;
+    this->max_size=max_size;
+    this->seek_position=0;
     this->loggerfile.open(name,std::ios::out | std::ios::binary ); //do this once
     if (this->loggerfile.is_open())
     {
@@ -73,7 +75,7 @@ bool ComplexDataLogger::write_data(char * buffer, int size)
         }
         else 
         {
-            std::cout<<"Maximum Size of file has been reached cannot not write anymore \n";
+            std::cout<<"Complex Logger : Maximum Size of file has been reached cannot not write anymore \n";
             status= false; 
             break;
         }
@@ -101,20 +103,38 @@ int ComplexDataLogger::add_header()
 bool SimpleDataLogger::write_data(char * buffer, int size)
 {
     bool status=false;
-    if (this->loggerfile.is_open())
+    this->loggerfile.seekp(this->seek_position);
+    status= true;  
+    for(int iterator=0; iterator <size; iterator ++)
     {
-        std::cout<<"File opened successfully";
-    }
-
-    for(int iterator=0;iterator < size ; iterator++)
-    {
-        this->loggerfile << buffer[iterator];
-        if((iterator+1) % chunksize ==0)
+        if(this->seek_position <= this->max_size)
         {
-            this->loggerfile <<"\n";
-        } 
+            if
+                (   
+                    (seek_position % chunksize ==0
+                    && seek_position >= chunksize)
+                )
+            {
+                this->loggerfile << "\n";
+                increment_position(1);
+            }
+            this->loggerfile << buffer[iterator];
+            increment_position(1);
+        }
+        else 
+        {
+            std::cout<<"Simple logger :Maximum Size of file has been reached cannot not write anymore \n";
+            status= false; 
+            break;
+        }
+        
     }
     return status;
+}
+
+void SimpleDataLogger::increment_position(long long iteration)
+{
+    this->seek_position+=iteration;
 }
 
 
