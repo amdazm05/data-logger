@@ -3,9 +3,11 @@
 #include <fstream>
 class DataLogger
 {
+    protected:
+        long long max_size;
     public:
         DataLogger(){}
-        virtual bool init()=0;
+        virtual bool init(char *name,long long max_size)=0;
         virtual bool write_data(char * buffer, int size)=0;
         virtual ~DataLogger(){}
 };
@@ -14,7 +16,7 @@ class SQLDataLogger:public DataLogger
 {
     public:
         SQLDataLogger(){}
-        bool init();
+        bool init(char *name,long long max_size);
         bool write_data(char * buffer, int size);
         ~SQLDataLogger(){}
 };
@@ -23,13 +25,15 @@ class SQLDataLogger:public DataLogger
 class ComplexDataLogger:public DataLogger
 {
     private:
-        const uint8_t header[3]={0x55,0xEE,0x45};
         std::ofstream loggerfile;
-        uint16_t wordlen=2;
+        uint16_t chunksize=1024;
+        long long seek_position;
+        void increment_position(long long position);
     public:
         ComplexDataLogger(){}
-        bool init();
+        bool init(char *name,long long max_size);
         bool write_data(char * buffer, int size);
+        int add_header();  //retruns size 
         ~ComplexDataLogger(){}
 };
 
@@ -38,10 +42,10 @@ class SimpleDataLogger:public DataLogger
 {   
     private:
         std::ofstream loggerfile;
-        uint16_t wordlen=2;
+        uint16_t chunksize=1024;
     public:
         SimpleDataLogger(){}
-        bool init();
+        bool init(char *name,long long max_size);
         bool write_data(char * buffer, int size);
         ~SimpleDataLogger(){}
 };

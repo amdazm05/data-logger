@@ -11,6 +11,7 @@ target_include_directories(
     LIBRARIES
         PUBLIC
         ${PROJECT_SOURCE_DIR}/include/datalogger
+        ${PROJECT_SOURCE_DIR}/include/chunkheader
 )
 
 add_executable(${PROJECT_NAME} src/main.cc)

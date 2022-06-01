@@ -1,11 +1,11 @@
 #include <datalogger.h>
 #include <iostream>
+#include <chunkheader.h>
 
 int main(int argc, char * argv[])
 {
     bool success=false;
     DataLogger ** loggers;
-
     loggers=new DataLogger *[3];
     
     SQLDataLogger sql;
@@ -18,20 +18,22 @@ int main(int argc, char * argv[])
     loggers[2] = &sdl;
 
     char * buffer =NULL;
-    buffer=new char[4];
+    buffer=new char[9];
+    loggers[2]->init("b.dat",9);
+    loggers[1]->init("c.dat",2048);
 
-    buffer[0]=0x55;
-    buffer[1]=0x64;
-    buffer[2]=0x74;
-    buffer[4]=0x09;
-    buffer[5]=0x09;
-    buffer[6]=0x09;
-    buffer[7]=0x09;
-    buffer[8]=0x09;
 
-    loggers[2]->write_data(buffer,9);
-    loggers[1]->write_data(buffer,9);
-    loggers[1]->write_data(buffer,9);
+    while(true)
+    {
+        if(loggers[1]->write_data("TrojanHorse",11))
+        {
+            continue;
+        }
+        else 
+        {
+            break;
+        }
+    }
 
     return success ? EXIT_SUCCESS:EXIT_FAILURE;
 }   
