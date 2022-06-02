@@ -54,6 +54,8 @@ class SimpleDataLogger:public DataLogger
         SimpleDataLogger(){}
         bool init(std::string name,long long max_size);
         bool write_data(char * buffer, int size);
+        void set_chunksize(int chunksize);
+        void closefile();
         bool reopen_file(std::string);
         ~SimpleDataLogger(){}
 };

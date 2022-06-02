@@ -28,6 +28,7 @@ int main(int argc, char * argv[])
     loggers[1] = &cdl;
 
     SimpleDataLogger sdl;
+    sdl.set_chunksize(chunk_size);
     loggers[2] = &sdl;
 
     char * buffer =NULL;
@@ -50,32 +51,35 @@ int main(int argc, char * argv[])
     // }
 
 
-    while(true)
-    {
-        if(loggers[2]->write_data("TrojanHorse",11))
-        {
-            continue;
-        }
-        else 
-        {
-            break;
-        }
-    }
+    // while(true)
+    // {
+    //     if(loggers[2]->write_data("TrojanHorse",11))
+    //     {
+    //         continue;
+    //     }
+    //     else 
+    //     {
+    //         break;
+    //     }
+    // }
 
     for(int i=0;i<8;i++)
     {
         loggers[1]->write_data("TrojanHorse",11);
+        loggers[2]->write_data("TrojanHorse",11);
     }
 
     cdl.closefile();
+    sdl.closefile();
     sleep(5);
 
     loggers[1]->reopen_file(path2);
+    loggers[2]->reopen_file(path2);
 
-
-    for(int i=0;i<40;i++)
+    for(int i=0;i<15;i++)
     {
         loggers[1]->write_data("TrojanHorse",11);
+        loggers[2]->write_data("TrojanHorse",11);
     }
 
     return success ? EXIT_SUCCESS:EXIT_FAILURE;

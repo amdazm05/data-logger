@@ -125,7 +125,7 @@ bool ComplexDataLogger::reopen_file(std::string name)
     this->seek_position=this->loggerfile.tellp();
     if (this->loggerfile.is_open())
     {
-        std::cout<<"Complex Logger: File opened successfully \n";
+        std::cout<<"Complex Logger: File reopened successfully \n";
         status=true;
     }
     return status;
@@ -163,7 +163,7 @@ bool SimpleDataLogger::write_data(char * buffer, int size)
                     && seek_position >= chunksize)
                 )
             {
-                this->loggerfile << "\n";
+                this->loggerfile << "#";
                 increment_position(1);
             }
             this->loggerfile << buffer[iterator];
@@ -188,6 +188,25 @@ void SimpleDataLogger::increment_position(long long iteration)
 
 bool SimpleDataLogger::reopen_file(std::string name)
 {
+    bool status=false;
+    this->loggerfile.open(name,std::ios::app | std::ios::binary |std::ios::ate); //do this once
+    this->seek_position=this->loggerfile.tellp();
+    if (this->loggerfile.is_open())
+    {
+        std::cout<<"Simple Logger: File reopened successfully \n";
+        status=true;
+    }
+    return status;
     return true;
 }
 
+void SimpleDataLogger::set_chunksize(int chunksize)
+{
+    std::cout<<"CHUNK SIZE SET TO :"<<chunksize<<std::endl;
+    this->chunksize=chunksize;
+}
+
+void SimpleDataLogger::closefile()
+{
+    this->loggerfile.close();
+}
