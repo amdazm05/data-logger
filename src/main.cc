@@ -3,7 +3,7 @@
 #include <chunkheader.h>
 #include "dotenv.h"
 #include <chunkheader.h>
-
+#include <unistd.h>
 int main(int argc, char * argv[])
 {
     dotenv::env.load_dotenv("/home/mean-bean-ubuntu-machine/data-logger/.env");
@@ -11,7 +11,7 @@ int main(int argc, char * argv[])
     std::cout << "CHUNK_SIZE: " << dotenv::env["CHUNK_SIZE"] << std::endl;
     
     long long  max_size=stol(dotenv::env["MAX_SIZE"]);
-    int chunk_size=stoi(dotenv::env["MAX_SIZE"]) ;
+    int chunk_size=stoi(dotenv::env["CHUNK_SIZE"]) ;
 
     std::string path1=dotenv::env["SIMPLE_FILE_PATH"];
     std::string path2 =dotenv::env["COMPLEX_FILE_PATH"];
@@ -24,6 +24,7 @@ int main(int argc, char * argv[])
     loggers[0] = &sql;
 
     ComplexDataLogger cdl;
+    cdl.set_chunksize(chunk_size);
     loggers[1] = &cdl;
 
     SimpleDataLogger sdl;
@@ -35,19 +36,18 @@ int main(int argc, char * argv[])
     loggers[2]->init(path1,max_size);
     loggers[1]->init(path2,max_size);
 
-
-    while(true)
-    {
-        if(loggers[1]->write_data("TrojanHorse",11))
-        {
-            continue;
-        }
-        else 
-        {
-            break;
-        }
+    // while(true)
+    // {
+    //     if(loggers[1]->write_data("TrojanHorse",11))
+    //     {
+    //         continue;
+    //     }
+    //     else 
+    //     {
+    //         break;
+    //     }
         
-    }
+    // }
 
 
     while(true)
@@ -60,6 +60,22 @@ int main(int argc, char * argv[])
         {
             break;
         }
+    }
+
+    for(int i=0;i<8;i++)
+    {
+        loggers[1]->write_data("TrojanHorse",11);
+    }
+
+    cdl.closefile();
+    sleep(5);
+
+    loggers[1]->reopen_file(path2);
+
+
+    for(int i=0;i<40;i++)
+    {
+        loggers[1]->write_data("TrojanHorse",11);
     }
 
     return success ? EXIT_SUCCESS:EXIT_FAILURE;

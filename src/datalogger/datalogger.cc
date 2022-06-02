@@ -53,7 +53,7 @@ bool SQLDataLogger::write_data(char * buffer, int size)
     return status;
 }
 
-bool SQLDataLogger::reopen_file(char *name)
+bool SQLDataLogger::reopen_file(std::string)
 {
     return true;
 }
@@ -76,7 +76,7 @@ bool ComplexDataLogger::write_data(char * buffer, int size)
     status= true;  
     for(int iterator=0; iterator <size; iterator ++)
     {
-        if(this->seek_position <= this->max_size)
+        if(this->seek_position < this->max_size)
         {
             if
                 (   
@@ -118,12 +118,11 @@ int ComplexDataLogger::add_header()
 }
 
 
-bool ComplexDataLogger::reopen_file(char *name)
+bool ComplexDataLogger::reopen_file(std::string name)
 {
     bool status=false;
-    this->loggerfile.open(name,std::ios::out | std::ios::binary | std::ios::ate ); //do this once
-    this->seek_position=this->loggerfile.eof();
-    // std::cout<<
+    this->loggerfile.open(name,std::ios::app | std::ios::binary |std::ios::ate); //do this once
+    this->seek_position=this->loggerfile.tellp();
     if (this->loggerfile.is_open())
     {
         std::cout<<"Complex Logger: File opened successfully \n";
@@ -132,8 +131,17 @@ bool ComplexDataLogger::reopen_file(char *name)
     return status;
 }
 
+void ComplexDataLogger::closefile()
+{
+    this->loggerfile.close();
+}
 
 
+void ComplexDataLogger::set_chunksize(int chunksize)
+{
+    std::cout<<"CHUNK SIZE SET TO :"<<chunksize<<std::endl;
+    this->chunksize=chunksize;
+}
 
 
 // ##############################################################
@@ -178,7 +186,7 @@ void SimpleDataLogger::increment_position(long long iteration)
 }
 
 
-bool SimpleDataLogger::reopen_file(char *name)
+bool SimpleDataLogger::reopen_file(std::string name)
 {
     return true;
 }
