@@ -5,13 +5,13 @@
 #include <fstream>
 #include <chunkheader.h>
 
-bool SQLDataLogger::init(char *name,long long max_size)
+bool SQLDataLogger::init(std::string name,long long max_size)
 {
     bool status=false;
     return status;
 }
 
-bool ComplexDataLogger::init(char *name,long long max_size)
+bool ComplexDataLogger::init(std::string name,long long max_size)
 {
     bool status=false;
     this->loggerfile.open(name,std::ios::out | std::ios::binary ); //do this once
@@ -25,7 +25,7 @@ bool ComplexDataLogger::init(char *name,long long max_size)
     return status;
 }
 
-bool SimpleDataLogger::init(char *name,long long max_size)
+bool SimpleDataLogger::init(std::string name,long long max_size)
 {
     bool status=false;
     this->max_size=max_size;
@@ -39,6 +39,12 @@ bool SimpleDataLogger::init(char *name,long long max_size)
     return status;
 }
 
+
+
+// ##############################################################
+//                      SQL LOGGER
+// ##############################################################
+
 bool SQLDataLogger::write_data(char * buffer, int size)
 {
     bool status=false;
@@ -46,6 +52,17 @@ bool SQLDataLogger::write_data(char * buffer, int size)
 
     return status;
 }
+
+bool SQLDataLogger::reopen_file(char *name)
+{
+    return true;
+}
+
+
+
+// ##############################################################
+//                      COMPLEX LOGGER
+// ##############################################################
 
 void ComplexDataLogger::increment_position(long long iteration)
 {
@@ -88,9 +105,9 @@ bool ComplexDataLogger::write_data(char * buffer, int size)
 int ComplexDataLogger::add_header()
 {
     deadbeef_header_stamp header;
-    unsigned char * header_pointer = (unsigned char*)&header;
+    uint8_t * header_pointer = (uint8_t*)&header;
     int iter_header=0;
-    while (header_pointer < (unsigned char*)&header + sizeof(header))
+    while (header_pointer < (uint8_t*)&header + sizeof(header))
     {
         this->loggerfile << *header_pointer;
         header_pointer++;
@@ -99,6 +116,29 @@ int ComplexDataLogger::add_header()
     }
     return sizeof(header);
 }
+
+
+bool ComplexDataLogger::reopen_file(char *name)
+{
+    bool status=false;
+    this->loggerfile.open(name,std::ios::out | std::ios::binary | std::ios::ate ); //do this once
+    this->seek_position=this->loggerfile.eof();
+    // std::cout<<
+    if (this->loggerfile.is_open())
+    {
+        std::cout<<"Complex Logger: File opened successfully \n";
+        status=true;
+    }
+    return status;
+}
+
+
+
+
+
+// ##############################################################
+//                      SIMPLE LOGGER
+// ##############################################################
 
 bool SimpleDataLogger::write_data(char * buffer, int size)
 {
@@ -138,4 +178,8 @@ void SimpleDataLogger::increment_position(long long iteration)
 }
 
 
+bool SimpleDataLogger::reopen_file(char *name)
+{
+    return true;
+}
 

@@ -1,9 +1,21 @@
 #include <datalogger.h>
 #include <iostream>
 #include <chunkheader.h>
+#include "dotenv.h"
+#include <chunkheader.h>
 
 int main(int argc, char * argv[])
 {
+    dotenv::env.load_dotenv("/home/mean-bean-ubuntu-machine/data-logger/.env");
+    std::cout << "MAX_SIZE: " << dotenv::env["MAX_SIZE"] << std::endl;
+    std::cout << "CHUNK_SIZE: " << dotenv::env["CHUNK_SIZE"] << std::endl;
+    
+    long long  max_size=stol(dotenv::env["MAX_SIZE"]);
+    int chunk_size=stoi(dotenv::env["MAX_SIZE"]) ;
+
+    std::string path1=dotenv::env["SIMPLE_FILE_PATH"];
+    std::string path2 =dotenv::env["COMPLEX_FILE_PATH"];
+
     bool success=false;
     DataLogger ** loggers;
     loggers=new DataLogger *[3];
@@ -19,8 +31,9 @@ int main(int argc, char * argv[])
 
     char * buffer =NULL;
     buffer=new char[9];
-    loggers[2]->init("b.dat",1024);
-    loggers[1]->init("c.dat",2048);
+    
+    loggers[2]->init(path1,max_size);
+    loggers[1]->init(path2,max_size);
 
 
     while(true)
@@ -33,6 +46,7 @@ int main(int argc, char * argv[])
         {
             break;
         }
+        
     }
 
 
