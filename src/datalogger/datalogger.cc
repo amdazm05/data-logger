@@ -14,8 +14,16 @@ bool SQLDataLogger::init(std::string name,long long max_size)
 bool ComplexDataLogger::init(std::string name,long long max_size)
 {
     bool status=false;
-    this->loggerfile.open(name,std::ios::out | std::ios::binary ); //do this once
+    this->loggerfile.open(name,std::ios::out | std::ios::binary |std::ios::app ); //do this once
     this->seek_position=0;    //initially set position to 0
+    this->seek_position=this->loggerfile.tellp();
+    std::cout<<seek_position<<std::endl;
+    if(seek_position%chunksize!=0 )
+    {
+        seek_position=seek_position-(seek_position%chunksize)+25;
+        std::cout<<seek_position<<std::endl;
+        loggerfile.seekp(seek_position);
+    }
     this->max_size=max_size;
     if (this->loggerfile.is_open())
     {
@@ -29,8 +37,14 @@ bool SimpleDataLogger::init(std::string name,long long max_size)
 {
     bool status=false;
     this->max_size=max_size;
-    this->seek_position=0;
-    this->loggerfile.open(name,std::ios::out | std::ios::binary ); //do this once
+    this->loggerfile.open(name,std::ios::out | std::ios::binary | std::ios::app ); //do this once
+    this->seek_position=this->loggerfile.tellp();
+    if(seek_position%chunksize!=0 )
+    {
+        seek_position=seek_position-(seek_position%chunksize)+25;
+        std::cout<<seek_position<<std::endl;
+        loggerfile.seekp(seek_position);
+    }
     if (this->loggerfile.is_open())
     {
         std::cout<<"Simple Logger: File opened successfully \n";
@@ -121,8 +135,15 @@ int ComplexDataLogger::add_header()
 bool ComplexDataLogger::reopen_file(std::string name)
 {
     bool status=false;
-    this->loggerfile.open(name,std::ios::app | std::ios::binary |std::ios::ate); //do this once
+    this->loggerfile.open(name,std::ios::in |std::ios::out| std::ios::binary |std::ios::ate | std::ios::app ); //do this once
     this->seek_position=this->loggerfile.tellp();
+    if(seek_position%chunksize!=0 )
+    {
+        seek_position=seek_position-(seek_position%chunksize)+25;
+        std::cout<<seek_position<<std::endl;
+        loggerfile.seekp(seek_position);
+    }
+
     if (this->loggerfile.is_open())
     {
         std::cout<<"Complex Logger: File reopened successfully \n";
@@ -166,6 +187,7 @@ bool SimpleDataLogger::write_data(char * buffer, int size)
                 this->loggerfile << "#";
                 increment_position(1);
             }
+            std::cout<<seek_position<<std::endl;
             this->loggerfile << buffer[iterator];
             increment_position(1);
         }
@@ -189,8 +211,14 @@ void SimpleDataLogger::increment_position(long long iteration)
 bool SimpleDataLogger::reopen_file(std::string name)
 {
     bool status=false;
-    this->loggerfile.open(name,std::ios::app | std::ios::binary |std::ios::ate); //do this once
+    this->loggerfile.open(name,std::ios::in |std::ios::out| std::ios::binary |std::ios::ate); //do this once
     this->seek_position=this->loggerfile.tellp();
+    if(seek_position%chunksize!=0 )
+    {
+        seek_position=seek_position-(seek_position%chunksize)+25;
+        std::cout<<seek_position<<std::endl;
+        loggerfile.seekp(seek_position);
+    }
     if (this->loggerfile.is_open())
     {
         std::cout<<"Simple Logger: File reopened successfully \n";
