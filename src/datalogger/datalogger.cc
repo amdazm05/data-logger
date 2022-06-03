@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <chunkheader.h>
+#include <fcntl.h>
 
 bool SQLDataLogger::init(std::string name,long long max_size)
 {
@@ -16,14 +17,15 @@ bool ComplexDataLogger::init(std::string name,long long max_size)
     bool status=false;
     this->max_size=max_size;
     this->loggerfile.open(name,std::ios::in |std::ios::out| std::ios::binary |std::ios::ate | std::ios::app ); //do this once
-    this->seek_position=this->loggerfile.tellp();
+    alotFilesize();
+    this->seek_position=0;
+    std::cout<<seek_position<<std::endl;
     if(seek_position!=0)
     {
         std::cout<<"Closing append mode"<<std::endl;
         this->loggerfile.open(name,std::ios::in |std::ios::out| std::ios::binary |std::ios::ate  );
     }
-    this->seek_position=this->loggerfile.tellp();
-     if(seek_position%chunksize!=0 )
+    if(seek_position%chunksize!=0 )
     {
         seek_position=seek_position-(seek_position%chunksize)+25;
         loggerfile.seekp(seek_position);
@@ -41,14 +43,11 @@ bool SimpleDataLogger::init(std::string name,long long max_size)
 {
     bool status=false;
     this->max_size=max_size;
-    std::cout<<name<<std::endl;
     this->loggerfile.open(name,std::ios::in |std::ios::out| std::ios::binary |std::ios::ate |std::ios::app ); //do this once
     this->seek_position=this->loggerfile.tellp();
-    std::cout<<seek_position<<std::endl;
     if(seek_position%chunksize!=0 )
     {
         seek_position=seek_position-(seek_position%chunksize)+25;
-        std::cout<<seek_position<<std::endl;
         loggerfile.seekp(seek_position);
     }
     this->max_size=max_size;
@@ -84,6 +83,12 @@ bool SQLDataLogger::reopen_file(std::string)
 // ##############################################################
 //                      COMPLEX LOGGER
 // ##############################################################
+bool ComplexDataLogger::alotFilesize()
+{   
+    this->loggerfile.seekg(0);
+    for(int i=0; i<max_size; i++)   //outputting spces to create file
+        this->loggerfile<<' ';
+}
 
 void ComplexDataLogger::increment_position(long long iteration)
 {
@@ -93,33 +98,34 @@ void ComplexDataLogger::increment_position(long long iteration)
 bool ComplexDataLogger::write_data(char * buffer, int size)
 {
     bool status=false;
-    loggerfile.seekp(this->seek_position);
-    status= true;  
-    for(int iterator=0; iterator <size; iterator ++)
-    {
-        if(this->seek_position < this->max_size)
-        {
-            if
-                (   
-                    seek_position==0
-                    || (seek_position % chunksize ==0
-                    && seek_position >= chunksize)
-                )
-            {
-                int sizeofheader=this->add_header();
-            }
-            this->loggerfile << buffer[iterator];
-            std::cout<<seek_position<<std::endl;
-            increment_position(1);
-        }
-        else 
-        {
-            std::cout<<"Complex Logger : Maximum Size of file has been reached cannot not write anymore \n";
-            status= false; 
-            break;
-        }
+    seek_position++;
+    loggerfile.seekp(seek_position);
+    loggerfile.write(buffer,size);
+    status= false;  
+    // for(int iterator=0; iterator <size; iterator ++)
+    // {
+    //     if(this->seek_position < this->max_size)
+    //     {
+    //         if
+    //             (   
+    //                 seek_position==0
+    //                 || (seek_position % chunksize ==0
+    //                 && seek_position >= chunksize)
+    //             )
+    //         {
+    //             int sizeofheader=this->add_header();
+    //         }
+    //         this->loggerfile << buffer[iterator];
+    //         increment_position(1);
+    //     }
+    //     else 
+    //     {
+    //         std::cout<<"Complex Logger : Maximum Size of file has been reached cannot not write anymore \n";
+    //         status= false; 
+    //         break;
+    //     }
         
-    }
+    // }
    
     return status;
 }
@@ -145,7 +151,6 @@ bool ComplexDataLogger::reopen_file(std::string name)
     bool status=false;
     this->loggerfile.open(name,std::ios::in |std::ios::out| std::ios::binary |std::ios::ate  ); //do this once
     this->seek_position=this->loggerfile.tellp();
-    std::cout<<"SEEK POSITION:"<<seek_position<<std::endl;
     if(seek_position%chunksize!=0 )
     {
         seek_position=seek_position-(seek_position%chunksize)+25;

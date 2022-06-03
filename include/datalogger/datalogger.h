@@ -37,6 +37,7 @@ class ComplexDataLogger:public DataLogger
         bool write_data(char * buffer, int size);
         bool reopen_file(std::string);
         void closefile();
+        bool alotFilesize();
         void set_chunksize(int chunksize);
         int add_header();  //retruns size 
         ~ComplexDataLogger(){}
@@ -55,6 +56,7 @@ class SimpleDataLogger:public DataLogger
         bool init(std::string name,long long max_size);
         bool write_data(char * buffer, int size);
         void set_chunksize(int chunksize);
+        bool alotFilesize();
         void closefile();
         bool reopen_file(std::string);
         ~SimpleDataLogger(){}
