@@ -27,7 +27,7 @@ class SQLDataLogger:public DataLogger
 class ComplexDataLogger:public DataLogger
 {
     private:
-        std::ofstream loggerfile;
+        std::fstream loggerfile;
         uint16_t chunksize; //default if not specified
         long long seek_position;
         void increment_position(long long position);
@@ -46,7 +46,7 @@ class ComplexDataLogger:public DataLogger
 class SimpleDataLogger:public DataLogger
 {   
     private:
-        std::ofstream loggerfile;
+        std::fstream loggerfile;
         uint16_t chunksize=1024;
         long long seek_position;
         void increment_position(long long position);

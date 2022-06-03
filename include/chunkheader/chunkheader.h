@@ -8,18 +8,16 @@
 
 struct deadbeef_header_stamp
 {
-    const int header= MACRO_INT;
-    unsigned char padding[4]={'#','#','#','#'};
-    long long time = ([] () 
+    int header;
+    long long time;
+    deadbeef_header_stamp()
     {
+        header = MACRO_INT;
         std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
         std::chrono::system_clock::duration dtn = tp.time_since_epoch();
-        
-        return 
-            dtn.count() * 
+        time = dtn.count() * 
             std::chrono::system_clock::period::num / std::chrono::system_clock::period::den;
-        
-    })();
+    }
 };
 
 #endif
