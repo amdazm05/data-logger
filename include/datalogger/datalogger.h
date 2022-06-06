@@ -30,6 +30,7 @@ class ComplexDataLogger:public DataLogger
         std::fstream loggerfile;
         uint16_t chunksize; //default if not specified
         long long seek_position;
+        std::string file_name;
         void increment_position(long long position);
     public:
         ComplexDataLogger(){}
@@ -38,9 +39,10 @@ class ComplexDataLogger:public DataLogger
         bool reopen_file(std::string);
         void closefile();
         bool alotFilesize();
+        int  find_seek_position();
         int  get_size_of_header();
         void set_chunksize(int chunksize);
-        int add_header();  //retruns size 
+        int  add_header();  //retruns size 
         ~ComplexDataLogger(){}
 };
 
