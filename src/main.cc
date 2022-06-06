@@ -37,31 +37,31 @@ int main(int argc, char * argv[])
     loggers[2]->init(path1,max_size);
     loggers[1]->init(path2,max_size);
 
-    while(true)
-    {
-        if(loggers[1]->write_data("TrojanHorse",11))
-        {
-            continue;
-        }
-        else 
-        {
-            break;
-        }
+    // while(true)
+    // {
+    //     if(loggers[1]->write_data("TrojanHorse",11))
+    //     {
+    //         continue;
+    //     }
+    //     else 
+    //     {
+    //         break;
+    //     }
         
-    }
+    // }
 
 
-    while(true)
-    {
-        if(loggers[2]->write_data("TrojanHorse",11))
-        {
-            continue;
-        }
-        else 
-        {
-            break;
-        }
-    }
+    // while(true)
+    // {
+    //     if(loggers[2]->write_data("TrojanHorse",11))
+    //     {
+    //         continue;
+    //     }
+    //     else 
+    //     {
+    //         break;
+    //     }
+    // }
 
     // for(int i=0;i<1;i++)
     // {
@@ -76,11 +76,11 @@ int main(int argc, char * argv[])
     // loggers[1]->reopen_file(path2);
     // loggers[2]->reopen_file(path1);
 
-    for(int i=0;i<2;i++)
+    for(int i=0;i<1;i++)
     {
-        loggers[1]->write_data("TrojanHorse",11);
-        loggers[2]->write_data("TrojanHorse",11);
+        loggers[1]->write_data("TrojanHorseisaDangerousVirusTrojanHorseisaDangerousVirus",56);
+        // loggers[2]->write_data("TrojanHorse",11);
     }
-
+    loggers[1]->write_data("Hereisatestcase",15);
     return success ? EXIT_SUCCESS:EXIT_FAILURE;
 }   

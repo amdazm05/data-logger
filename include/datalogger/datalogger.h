@@ -38,6 +38,7 @@ class ComplexDataLogger:public DataLogger
         bool reopen_file(std::string);
         void closefile();
         bool alotFilesize();
+        int  get_size_of_header();
         void set_chunksize(int chunksize);
         int add_header();  //retruns size 
         ~ComplexDataLogger(){}
