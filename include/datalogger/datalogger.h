@@ -27,9 +27,10 @@ class SQLDataLogger:public DataLogger
 class ComplexDataLogger:public DataLogger
 {
     private:
-        std::ofstream loggerfile;
+        std::fstream loggerfile;
         uint16_t chunksize; //default if not specified
         long long seek_position;
+        std::string file_name;
         void increment_position(long long position);
     public:
         ComplexDataLogger(){}
@@ -37,8 +38,11 @@ class ComplexDataLogger:public DataLogger
         bool write_data(char * buffer, int size);
         bool reopen_file(std::string);
         void closefile();
+        bool alotFilesize();
+        int  find_seek_position();
+        int  get_size_of_header();
         void set_chunksize(int chunksize);
-        int add_header();  //retruns size 
+        int  add_header();  //retruns size 
         ~ComplexDataLogger(){}
 };
 
@@ -46,7 +50,7 @@ class ComplexDataLogger:public DataLogger
 class SimpleDataLogger:public DataLogger
 {   
     private:
-        std::ofstream loggerfile;
+        std::fstream loggerfile;
         uint16_t chunksize=1024;
         long long seek_position;
         void increment_position(long long position);
@@ -55,6 +59,7 @@ class SimpleDataLogger:public DataLogger
         bool init(std::string name,long long max_size);
         bool write_data(char * buffer, int size);
         void set_chunksize(int chunksize);
+        bool alotFilesize();
         void closefile();
         bool reopen_file(std::string);
         ~SimpleDataLogger(){}
